@@ -2,6 +2,7 @@ version: "3"
 services:
   sonarqube:
     image: sonarqube:8.9.7-community
+    container_name: sonarqube-server
     depends_on:
       - db
     environment:
@@ -15,6 +16,15 @@ services:
       - sonarqube_logs:/opt/sonarqube/logs
     ports:
       - "9000:9000"
+    
+  sonarqube-cli:
+    image: sonarsource/sonar-scanner-cli
+    container_name: sonarqube-cli
+    volumes:
+      - "${YOUR_REPO}:/usr/src"
+    tty: True
+    command: bash
+    network_mode: "service:sonarqube"
 
   db:
     image: postgres:12
