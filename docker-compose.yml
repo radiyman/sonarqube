@@ -19,6 +19,7 @@ services:
     ### A SonarQube instance will stop gracefully, waiting for any tasks in progress to finish. 
     ### Waiting for in-progress tasks to finish can take a large amount of time which the docker does not expect by default when stopping. 
     stop_grace_period: 3600s
+    restart: always
     logging:
       driver: "json-file"
       options:
@@ -42,6 +43,7 @@ services:
     volumes:
       - postgresql_data:/var/lib/postgresql/data
     stop_grace_period: 3600s
+    restart: always
     logging:
       driver: "json-file"
       options:
