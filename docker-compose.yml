@@ -15,16 +15,24 @@ services:
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_logs:/opt/sonarqube/logs
     ports:
-      - "9000:9000"
+      - "80:9000"
+    ### A SonarQube instance will stop gracefully, waiting for any tasks in progress to finish. 
+    ### Waiting for in-progress tasks to finish can take a large amount of time which the docker does not expect by default when stopping. 
+    stop_grace_period: 3600s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "5"
     
-  sonarqube-cli:
-    image: sonarsource/sonar-scanner-cli
-    container_name: sonarqube-cli
-    volumes:
-      - "${YOUR_REPO}:/usr/src"
-    tty: True
-    command: bash
-    network_mode: "service:sonarqube"
+  # sonarqube-cli:
+  #   image: sonarsource/sonar-scanner-cli
+  #   container_name: sonarqube-cli
+  #   volumes:
+  #     - "${YOUR_REPO}:/usr/src"
+  #   tty: True
+  #   command: bash
+  #   network_mode: "service:sonarqube"
 
   db:
     image: postgres:12
@@ -32,12 +40,16 @@ services:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar
     volumes:
-      - postgresql:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
+    stop_grace_period: 3600s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "5"
 
 volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_logs:
-  postgresql:
   postgresql_data:

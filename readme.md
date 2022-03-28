@@ -42,3 +42,35 @@ sonar-scanner \
 
 ## Sonar-scanner cli docker image:
 https://hub.docker.com/r/sonarsource/sonar-scanner-cli  
+
+## Permanently set server settings for Ubuntu  
+Instead running ./prepare_system.sh every time, you can change your settings forever.  
+Perform actions on the Sonarqube server:  
+1) create /etc/sysctl.d/99-sonarqube.conf file  
+add code to it:  
+```
+# These parameters are needed for elasticsearch to work, which is needed for sonarqube to work.
+vm.max_map_count=262144
+fs.file-max=131072
+```
+2) restart sysctl with new params:  
+```
+sudo sysctl -p
+```
+3) update /etc/security/limits.conf file, add lines to it:  
+```
+* soft nproc           131072
+* hard nproc           131072
+* soft nofile          131072
+* hard nofile          131072
+root soft nproc           131072
+root hard nproc           131072
+root soft nofile          131072
+root hard nofile          131072
+```
+4) restart system.
+You can check that all is ok by command:  
+```
+ulimit -n
+```
+if the response is 131072 then everything is done correctly.  
